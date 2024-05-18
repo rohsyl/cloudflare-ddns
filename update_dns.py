@@ -44,7 +44,7 @@ def update_dns_record(record_id, record_name, ip):
         'name': record_name,
         'content': ip,
         'ttl': 1,
-        'proxied': False,
+        'proxied': True,
     }
     response = requests.put(url, headers=headers, json=data)
     response.raise_for_status()
