@@ -3,14 +3,12 @@ import os
 import ast
 from dotenv import load_dotenv
 
-# Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
 
-# Configuration depuis les variables d'environnement
 CLOUDFLARE_EMAIL = os.getenv('CLOUDFLARE_EMAIL')
 CLOUDFLARE_API_KEY = os.getenv('CLOUDFLARE_API_KEY')
 ZONE_ID = os.getenv('ZONE_ID')
-DNS_RECORDS = ast.literal_eval(os.getenv('DNS_RECORDS'))  # Convertir la chaîne en liste de tuples
+DNS_RECORDS = ast.literal_eval(os.getenv('DNS_RECORDS'))
 
 
 def get_public_ip():
