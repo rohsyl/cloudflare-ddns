@@ -43,5 +43,10 @@ python update_dns.py
 
 You can automate this script to run at regular intervals using a task scheduler like cron on Linux or Task Scheduler on Windows.
 
+Exemple to run the script every 5 minutes using CRON :
+```
+*/5 * * * * /usr/bin/python3 /path/to/your/script/update_dns.py >> /path/to/your/logfile.log 2>&1
+```
+
 ## License
 This project is licensed under the MIT License.
