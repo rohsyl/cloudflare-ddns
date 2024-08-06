@@ -28,9 +28,12 @@ Create a .env file in the same directory as your script and add your Cloudflare 
 ```env
 CLOUDFLARE_EMAIL=your-email@example.com
 CLOUDFLARE_API_KEY=your-api-key
-ZONE_ID=your-zone-id
-DNS_RECORDS=[("dns-record-id-1", "example.com"), ("dns-record-id-2", "sub.example.com")]
+ZONE_ID=["your-zone-id-d41f54"]
+DNS_RECORDS_d41f54=[("dns-record-id-1", "example.com"), ("dns-record-id-2", "sub.example.com")]
 ```
+> `ZOME_ID` is an array of the zones you want to work with.
+>
+> You need to add an entry `DNS_RECORDS_` in the .env for each zone and append the last 6 char of the zone id.
 
 ### 4. Run the Script
 Run the script using Python:
