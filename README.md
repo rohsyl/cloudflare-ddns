@@ -35,6 +35,12 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones" \
 -H "Content-Type: application/json" \
 -H "X-Auth-Email: <your-email-address>" \
 -H "X-Auth-Key: <your-global-api-key>"
+
+# or using API Token
+
+curl -X GET "https://api.cloudflare.com/client/v4/zones" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <your-api-token>"
 ```
 
 Get dns records of a zone using Cloudflare API
@@ -43,6 +49,12 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones/<zone-id>/dns_records" \
 -H "Content-Type: application/json" \
 -H "X-Auth-Email: <your-email-address>" \
 -H "X-Auth-Key: <your-global-api-key>"
+
+# or using API Token
+
+curl -X GET "https://api.cloudflare.com/client/v4/zones/<zone-id>/dns_records" \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <your-api-token>"
 ```
 
 ### 4. Create a .env File
@@ -50,13 +62,18 @@ Create a .env file in the same directory as your script and add your Cloudflare 
 
 ```env
 CLOUDFLARE_EMAIL=your-email@example.com
+# May contain Cloudflare API Key or API Token
 CLOUDFLARE_API_KEY=your-api-key
 ZONE_ID=["your-zone-id-d41f54"]
 DNS_RECORDS_d41f54=[("dns-record-id-1", "example.com"), ("dns-record-id-2", "sub.example.com")]
 ```
-> `ZOME_ID` is an array of the zones you want to work with.
+> `ZONE_ID` is an array of the zones you want to work with.
 >
 > You need to add an entry `DNS_RECORDS_[...]` in the .env for each zone and append **the last 6 char of the zone id**.
+>
+> If you used an API Token, you can omit `CLOUDFLARE_EMAIL`
+>
+> For more information concerning the cloudflare API please refer to the [Cloudflare API documentation](https://developers.cloudflare.com/api)
 
 ### 5. Run the Script
 Run the script using Python:

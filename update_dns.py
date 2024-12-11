@@ -10,30 +10,27 @@ CLOUDFLARE_EMAIL = os.getenv('CLOUDFLARE_EMAIL')
 CLOUDFLARE_API_KEY = os.getenv('CLOUDFLARE_API_KEY')
 ZONE_IDS = ast.literal_eval(os.getenv('ZONE_ID'))  # List of zone IDs
 
+
 def get_public_ip():
     response = requests.get('https://api.ipify.org?format=json')
     response.raise_for_status()
     ip = response.json()['ip']
     return ip
 
+
 def get_dns_record(zone_id, record_id):
     url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{record_id}'
-    headers = {
-        'X-Auth-Email': CLOUDFLARE_EMAIL,
-        'X-Auth-Key': CLOUDFLARE_API_KEY,
-        'Content-Type': 'application/json',
-    }
+    api_key_type = identify_cloudflare_key(CLOUDFLARE_API_KEY)
+    headers = get_headers(api_key_type)
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
 
+
 def update_dns_record(zone_id, record_id, record_name, ip):
     url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{record_id}'
-    headers = {
-        'X-Auth-Email': CLOUDFLARE_EMAIL,
-        'X-Auth-Key': CLOUDFLARE_API_KEY,
-        'Content-Type': 'application/json',
-    }
+    api_key_type = identify_cloudflare_key(CLOUDFLARE_API_KEY)
+    headers = get_headers(api_key_type)
     data = {
         'type': 'A',
         'name': record_name,
@@ -44,6 +41,46 @@ def update_dns_record(zone_id, record_id, record_name, ip):
     response = requests.put(url, headers=headers, json=data)
     response.raise_for_status()
     return response.json()
+
+
+def get_headers(api_key_type):
+    if api_key_type == 'Global API Key':
+        return {
+            'X-Auth-Email': CLOUDFLARE_EMAIL,
+            'X-Auth-Key': CLOUDFLARE_API_KEY,
+            'Content-Type': 'application/json',
+        }
+    elif api_key_type == 'API Token':
+        return {
+            'Authorization': f'Bearer {CLOUDFLARE_API_KEY}',
+            'Content-Type': 'application/json',
+        }
+    else:
+        raise ValueError('Unknown API key type')
+
+
+def identify_cloudflare_key(api_key):
+    """
+    Identifies whether a given Cloudflare key is a Global API Key or an API Token.
+
+    Args:
+        api_key (str): The Cloudflare key to be identified.
+
+    Returns:
+        str: 'Global API Key' if the key matches the pattern for a Global API Key,
+             'API Token' if the key matches the pattern for an API Token,
+             'Unknown' if it does not match any known patterns.
+    """
+    # Check length and format for Global API Key
+    if len(api_key) == 37 and all(c in 'abcdef0123456789' for c in api_key):
+        return 'Global API Key'
+
+    # Check format for API Token
+    if len(api_key) == 40 and all(c.isalnum() or c in '-_' for c in api_key[4:]):
+        return 'API Token'
+
+    return 'Unknown'
+
 
 def main():
     try:
@@ -71,6 +108,7 @@ def main():
     except Exception as e:
         current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"[{current_date}] An error occurred: {e}")
+
 
 if __name__ == '__main__':
     main()
