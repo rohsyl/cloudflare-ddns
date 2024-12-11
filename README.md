@@ -22,7 +22,30 @@ First, make sure you have Python 3.x installed. Then, install the required Pytho
 pip install requests python-dotenv
 ```
 
-### 2. Create a .env File
+### 2. Get your Cloudflare API Key
+
+- Log in your Cloudflare account and go to "My Profile" -> "API Tokens"
+- View your "Global API Key" and save it for later
+
+### 3. Get zone id and records ids
+
+Get your zones using Cloudflare API
+```
+curl -X GET "https://api.cloudflare.com/client/v4/zones" \
+-H "Content-Type: application/json" \
+-H "X-Auth-Email: <your-email-address>" \
+-H "X-Auth-Key: <your-global-api-key>"
+```
+
+Get dns records of a zone using Cloudflare API
+```
+curl -X GET "https://api.cloudflare.com/client/v4/zones/<zone-id>/dns_records" \
+-H "Content-Type: application/json" \
+-H "X-Auth-Email: <your-email-address>" \
+-H "X-Auth-Key: <your-global-api-key>"
+```
+
+### 4. Create a .env File
 Create a .env file in the same directory as your script and add your Cloudflare API credentials and DNS records information. The .env file should look like this:
 
 ```env
@@ -33,9 +56,9 @@ DNS_RECORDS_d41f54=[("dns-record-id-1", "example.com"), ("dns-record-id-2", "sub
 ```
 > `ZOME_ID` is an array of the zones you want to work with.
 >
-> You need to add an entry `DNS_RECORDS_` in the .env for each zone and append the last 6 char of the zone id.
+> You need to add an entry `DNS_RECORDS_[...]` in the .env for each zone and append **the last 6 char of the zone id**.
 
-### 4. Run the Script
+### 5. Run the Script
 Run the script using Python:
 
 ```sh
